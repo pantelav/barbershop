@@ -18,4 +18,4 @@ jobs:
             git pull
             cd ./backend
             npm install
-            git pull
+            exit
