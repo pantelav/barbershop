@@ -14,7 +14,11 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           script: |
+<<<<<<< HEAD
             cd ./app
             git pull
             cd ./backend
             npm install
+=======
+            git pull
+>>>>>>> 1c132d0c4187a39cc76d9fa1dc8b706d42da1568
