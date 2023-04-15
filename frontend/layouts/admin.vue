@@ -13,7 +13,7 @@
       <NuxtPage />
     </main>
     <Sidebar v-model:visible="sidebar">
-      <AdminNav />
+      <AdminNav @close="sidebar = false"/>
     </Sidebar>
   </div>
 </template>

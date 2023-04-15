@@ -1,13 +1,13 @@
 <template>
   <nav class="nav">
-    <nuxt-link to="/admin">Заказы</nuxt-link>
-    <nuxt-link to="/admin/staff">Сотрудники</nuxt-link>
-    <nuxt-link to="/admin/services">Услуги</nuxt-link>
+    <nuxt-link to="/admin" @click="$emit('close')">Заказы</nuxt-link>
+    <nuxt-link to="/admin/staff" @click="$emit('close')">Сотрудники</nuxt-link>
+    <nuxt-link to="/admin/services" @click="$emit('close')">Услуги</nuxt-link>
   </nav>
 </template>
 
 <script setup lang='ts'>
-
+defineEmits(['close'])
 </script>
 
 <style scoped lang='scss'>
