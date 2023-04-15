@@ -9,9 +9,7 @@ import { networkInterfaces } from 'os';
 import rootRouter from "./routes/index"
 import firstStart from './utils/firstStart';
 
-const ip = Object.values(networkInterfaces()).flat().find(i => i?.family == 'IPv4' && !i?.internal)?.address;
 dotenv.config();
-
 
 mongoose.connect(process.env.DB_URL as string).then(() => {
   console.log('✅ DB connected');
@@ -37,7 +35,7 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 // @ts-ignore: Unreachable code error
-app.listen(port, ip, async () => {
+app.listen(port, async () => {
   await firstStart()
-  console.log(`✅ Server is running at http://${ip}:${port}`);
+  console.log(`✅ Server is running at http://localhost:${port}`);
 });

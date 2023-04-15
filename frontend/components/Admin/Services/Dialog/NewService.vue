@@ -12,5 +12,3 @@ const service = ref({
   price: null
 })
 </script>
-
-<style scoped lang='scss'></style>

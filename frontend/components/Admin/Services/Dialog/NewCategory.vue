@@ -8,5 +8,3 @@
 <script setup lang='ts'>
 const category = ref('')
 </script>
-
-<style scoped lang='scss'></style>

@@ -23,5 +23,3 @@ onMounted(() => {
   service.value.price = props.data.price as number
 })
 </script>
-
-<style scoped lang='scss'></style>
