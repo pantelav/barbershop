@@ -1,0 +1,9 @@
+.dialog__container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 400px;
+  @media screen and (max-width: 500px) {
+    width: 80vw;
+  }
+}

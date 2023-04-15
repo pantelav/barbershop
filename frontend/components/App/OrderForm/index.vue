@@ -22,10 +22,7 @@
 </template>
 
 <script setup lang='ts'>
-import BarberContainer from './BarberContainer.vue';
-import Services from './Services.vue';
-import Date from './Date.vue';
-import Info from './Info.vue';
+import { AppOrderFormBarberContainer, LazyAppOrderFormServices, LazyAppOrderFormDate, LazyAppOrderFormInfo } from '#components'
 
 const props = defineProps({
   modal: {
@@ -33,7 +30,7 @@ const props = defineProps({
     default: false
   }
 })
-const components = shallowRef([BarberContainer, Services, Date, Info])
+const components = shallowRef([AppOrderFormBarberContainer, LazyAppOrderFormServices, LazyAppOrderFormDate, LazyAppOrderFormInfo])
 const steps = useSteps()
 const formTitle = ['Выберите барбера', 'Выберите услуги', 'Выберите время', 'Введите контактные данные']
 const btnText = ['Выбрать услуги', 'Выбрать время', 'Ввести данные', 'Записаться']

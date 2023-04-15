@@ -1,8 +1,8 @@
 <template>
   <nav class="nav">
-    <nuxt-link to="#">Заказы</nuxt-link>
-    <nuxt-link to="#">Сотрудники</nuxt-link>
-    <nuxt-link to="#">Услуги</nuxt-link>
+    <nuxt-link to="/admin">Заказы</nuxt-link>
+    <nuxt-link to="/admin/staff">Сотрудники</nuxt-link>
+    <nuxt-link to="/admin/services">Услуги</nuxt-link>
   </nav>
 </template>
 
