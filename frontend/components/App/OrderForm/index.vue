@@ -13,10 +13,11 @@
         <component :is="components[steps - 1]" />
       </Transition>
     </div>
-    <div class="form__actions w-full flex xs:mt-8 mt-4"
+    <div class="form__actions w-full flex xs:mt-0 mt-4"
       :class="{ 'justify-between': steps > 1, 'justify-end': steps < 2 }">
-      <button class="btn btn-prev bg-blue-600" @click="prevStep" v-if="steps > 1">Назад</button>
-      <button class="btn btn-next" @click="nextStep">{{ btnText[steps - 1] }}</button>
+      <Button label="Назад" severity="info" text @click="prevStep" v-if="steps > 1" />
+      <!-- <button class="btn btn-next" @click="nextStep">{{ btnText[steps - 1] }}</button> -->
+      <Button :label="btnText[steps - 1]" @click="nextStep" />
     </div>
   </div>
 </template>
@@ -126,10 +127,6 @@ function prevStep () {
     padding: 5px 10px;
     font-size: 14px;
   }
-}
-
-.btn-prev {
-  background-color: rgb(37, 99, 235);
 }
 
 .fade-enter-from,

@@ -5,6 +5,14 @@ import InputText from 'primevue/inputtext';
 import Dialog from 'primevue/dialog';
 import Sidebar from 'primevue/sidebar';
 import Button from 'primevue/button';
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
+import RadioButton from 'primevue/radiobutton';
+import Dropdown from 'primevue/dropdown';
+import FileUpload from 'primevue/fileupload';
+import MultiSelect from 'primevue/multiselect';
+// import ColumnGroup from 'primevue/columngroup';
+// import Row from 'primevue/row';  
 
 export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.use(PrimeVue, {
@@ -21,4 +29,13 @@ export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.component("Dialog", Dialog);
   nuxtApp.vueApp.component("Sidebar", Sidebar);
   nuxtApp.vueApp.component("Button", Button);
+  nuxtApp.vueApp.component("DataTable", DataTable);
+  nuxtApp.vueApp.component("Column", Column);
+  nuxtApp.vueApp.component("Column", Column);
+  nuxtApp.vueApp.component("RadioButton", RadioButton);
+  nuxtApp.vueApp.component("Dropdown", Dropdown);
+  nuxtApp.vueApp.component("FileUpload", FileUpload);
+  nuxtApp.vueApp.component("MultiSelect", MultiSelect);
+  // nuxtApp.vueApp.component("ColumnGroup", ColumnGroup);
+  // nuxtApp.vueApp.component("Row", Row);
 });
