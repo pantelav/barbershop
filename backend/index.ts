@@ -9,6 +9,7 @@ import rootRouter from "./routes/index"
 import firstStart from './utils/firstStart';
 
 dotenv.config();
+const IP = process.env.IP || '127.0.0.1'
 
 async function connectDb () {
   console.log(process.env.DB_URL);
@@ -39,10 +40,10 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 // @ts-ignore: Unreachable code error
-app.listen(port, async () => {
+app.listen(port, IP, async () => {
   try {
     await connectDb()
-    console.log(`✅ Server is running at http://localhost:${port}`);
+    console.log(`✅ Server is running at http://${IP}:${port}`);
   } catch (error) {
     console.log('❌ App crashed');
   }
