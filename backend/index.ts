@@ -5,18 +5,22 @@ import cors from "cors"
 import helmet from 'helmet';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
-import { networkInterfaces } from 'os';
 import rootRouter from "./routes/index"
 import firstStart from './utils/firstStart';
 
 dotenv.config();
 
-mongoose.connect(process.env.DB_URL as string).then(() => {
-  console.log('✅ DB connected');
-}).catch(error => {
-  console.log("❌ DB connection error")
-  console.log(error);
-})
+async function connectDb () {
+  console.log(process.env.DB_URL);
+  try {
+    await mongoose.connect(process.env.DB_URL as string)
+    console.log('✅ DB connected');
+    await firstStart()
+  } catch (error) {
+    console.log("❌ DB connection error")
+    console.log(error);
+  }
+}
 
 const app: Express = express();
 const port = process.env.PORT || 8000;
@@ -36,6 +40,10 @@ app.get('/', (req: Request, res: Response) => {
 
 // @ts-ignore: Unreachable code error
 app.listen(port, async () => {
-  await firstStart()
-  console.log(`✅ Server is running at http://localhost:${port}`);
+  try {
+    await connectDb()
+    console.log(`✅ Server is running at http://localhost:${port}`);
+  } catch (error) {
+    console.log('❌ App crashed');
+  }
 });

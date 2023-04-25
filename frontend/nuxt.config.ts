@@ -5,7 +5,8 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
-      apiYandex: ''
+      apiYandex: '',
+      api: ''
     }
   },
   css: [

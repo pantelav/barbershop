@@ -1,22 +1,24 @@
 import mongoose from 'mongoose'
+import { IServiceSchema } from '../types/services'
 
 const { Schema, model } = mongoose
 
-interface IService {
-  title: string,
-  description: string,
-  picture: string,
-  price: number
-}
-
-const serviceSchema = new Schema<IService>({
+const serviceSchema = new Schema<IServiceSchema>({
   title: {
     type: String,
     required: true
   },
   description: String,
   picture: String,
-  price: Number
+  price: {
+    type: Number,
+    required: true
+  },
+  category: {
+    type: Schema.Types.ObjectId,
+    ref: 'Category',
+    required: true
+  }
 })
 
-export default model<IService>("Service", serviceSchema)
+export default model<IServiceSchema>("Service", serviceSchema)

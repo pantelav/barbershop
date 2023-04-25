@@ -1,7 +1,7 @@
 <template>
   <div class="staff__container md:p-20 w-full">
     <DataTable :value="staff" class="md:border shadow-xl" v-model:filters="filter" v-model:selection="selectedPerson"
-      @row-select="showDialog(true)" selectionMode="single" responsiveLayout="stack">
+      @row-select="showDialog(true)" selectionMode="single" responsiveLayout="stack" :loading="isLoading">
       <template #header>
         <div class="flex flex-wrap items-center justify-between gap-2">
           <span class="text-xl font-bold">Сотрудники</span>
@@ -11,17 +11,23 @@
           <InputText placeholder="Поиск по имени" v-model="filter['name'].value" />
         </div>
       </template>
+      <template #empty>
+        <p class="text-center">Добавьте персонал</p>
+      </template>
+
       <Column v-for="col in columns" :key="col.field" :field="col.field" :header="col.header"
         :sortable="col.field !== 'avatar'">
         <template v-if="col.field === 'name'" #body="slotProps">
-          <span
-            class="pl-3 md:pl-0">{{ `${slotProps.data?.lastName || ''} ${slotProps.data?.firstName || ''} ${slotProps.data?.thirdName || ''}` }}</span>
+          <span class="pl-3 md:pl-0">{{ `${slotProps.data?.name || ''}` }}</span>
         </template>
         <template v-if="col.field === 'avatar'" #body="slotProps">
-          <NuxtImg :src="slotProps.data.avatar" width="50" fit="cover" />
+          <NuxtImg :src="getAvatarUrl(slotProps.data)" width="50" fit="cover" />
+        </template>
+        <template v-if="col.field === 'category'" #body="slotProps">
+          <p>{{ slotProps.data?.role === 'barber' ? 'Барбер' : 'Модератор' }}</p>
         </template>
         <template v-if="col.field === 'status'" #body="slotProps">
-          <div v-if="slotProps.data.active" class="status-round bg-green-500">
+          <div v-if="slotProps.data.isActive" class="status-round bg-green-500">
             <i class="pi pi-check"></i>
           </div>
           <div v-else class="status-round bg-red-600">
@@ -31,17 +37,20 @@
       </Column>
     </DataTable>
     <Dialog v-model:visible="dialog" modal :header="dialogHeader" :draggable="false" @hide="selectedPerson = null">
-      <AdminStaffDialog :user="selectedPerson" />
+      <AdminStaffDialog :user="selectedPerson" @close="fetchStaff" />
     </Dialog>
+    <Toast />
   </div>
 </template>
 
 <script setup lang='ts'>
 import { FilterMatchMode } from 'primevue/api'
+import { endpoints } from '@/constants/endpoints'
 definePageMeta({
   layout: 'admin'
 })
 
+const isLoading = ref(true)
 const dialog = ref(false)
 const selectedPerson = ref()
 const dialogHeader = ref('')
@@ -53,48 +62,42 @@ const columns = [
   { field: 'status', header: "Активен" },
 ]
 
-const staff = ref([
-  {
-    lastName: 'Иванов',
-    firstName: 'Иван',
-    thirdName: 'Иванович',
-    avatar: '/icons/man-face.svg',
-    category: "Модератор",
-    active: true
-  },
-  {
-    lastName: 'Петров',
-    firstName: 'Иван',
-    thirdName: 'Иванович',
-    avatar: '/icons/man-face.svg',
-    category: "Барбер",
-    active: true
-  },
-  {
-    lastName: 'Голубков',
-    firstName: 'Иван',
-    thirdName: 'Иванович',
-    avatar: '/icons/man-face.svg',
-    category: "Барбер",
-    active: false
-  },
-  {
-    lastName: 'Иванов',
-    firstName: 'Иван',
-    thirdName: 'Иванович',
-    avatar: '/icons/man-face.svg',
-    category: "Барбер",
-    active: true
-  },
-])
+const staff = ref()
 
 const filter = ref({
   name: { value: null, matchMode: FilterMatchMode.CONTAINS }
 })
 
+onMounted(async () => {
+  await fetchStaff()
+})
+
+async function fetchStaff () {
+  try {
+    isLoading.value = true
+    const { data } = await useApiFetch(endpoints.admin.staff)
+    staff.value = toRaw(data.value)
+    if (staff.value?.message === 'Нет записей') staff.value = null
+  } catch (error) {
+    useNotify('error', 'Ошибка сервера')
+  } finally {
+    isLoading.value = false
+    dialog.value = false
+  }
+}
+
 function showDialog (edit = false) {
   dialog.value = true
   edit ? dialogHeader.value = 'Редактировать' : dialogHeader.value = 'Добавить'
+}
+
+function getAvatarUrl (data: any) {
+  if (data?.avatar) return data.avatar
+  if (data.gender === 'f') {
+    return '/icons/woman-face.svg'
+  } else {
+    return '/icons/man-face.svg'
+  }
 }
 </script>
 

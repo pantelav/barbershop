@@ -1,3 +1,4 @@
+import { IStaff } from '../types/staff'
 import { IUserData } from '../types/user'
 
 export const userTransformer = (user: any): IUserData => {
@@ -6,4 +7,19 @@ export const userTransformer = (user: any): IUserData => {
     username: user.username,
     role: user.role
   }
+}
+
+export const staffTransformer = (users: any[]): IStaff[] => {
+  const data: IStaff[] = []
+  users.forEach(user => {
+    const obj = {
+      id: user._id.toString(),
+      name: user.name,
+      role: user.role,
+      isActive: user.isActive,
+      gender: user.gender
+    }
+    data.push(obj)
+  })
+  return data
 }

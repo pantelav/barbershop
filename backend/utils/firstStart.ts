@@ -3,8 +3,8 @@ import Admin from '../models/Admin';
 import bcrypt from "bcrypt"
 
 export default async function firstStart () {
-  const rootAdmin = await Admin.findOne({ login: 'admin' })
   try {
+    const rootAdmin = await Admin.findOne({ login: 'admin' })
     if (!rootAdmin) {
       const password = process.env.DEFAULT_ADMIN_PASS || '123456'
       console.log(password);

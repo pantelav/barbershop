@@ -1,10 +1,10 @@
 import mongoose from 'mongoose'
-import { IAdmin } from '../types/admin'
+import { IAdminSchema } from '../types/admin'
 
 const { Schema, model } = mongoose
 
 
-const adminSchema = new Schema<IAdmin>({
+const adminSchema = new Schema<IAdminSchema>({
   login: {
     type: String,
     required: true,
@@ -27,7 +27,7 @@ const adminSchema = new Schema<IAdmin>({
     type: Boolean,
     default: true
   },
-  refresh: String
+  refresh: String,
 })
 
-export default model<IAdmin>("Admin", adminSchema)
+export default model<IAdminSchema>("Admin", adminSchema)
