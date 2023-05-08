@@ -52,4 +52,14 @@ export default class StaffController {
       return res.status(500).json({ message: 'Ошибка сервера' })
     }
   }
+
+  static async getBarbers (req: Request, res: Response) {
+    try {
+      const barbers = await Staff.find({role: 'barber', isActive: true})
+      return res.json(barbers)
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ message: 'Ошибка сервера' })
+    }
+  }
 }

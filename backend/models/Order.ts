@@ -1,32 +1,32 @@
-import mongoose, { Types } from 'mongoose'
-
+import mongoose from 'mongoose'
+import { serviceSchema } from './Service'
+import { IOrderSchema } from '../types/order'
 const { Schema, model } = mongoose
 
-interface IOrder {
-  user: Types.ObjectId,
-  comment: string,
-  barber: Types.ObjectId,
-  date: Date,
-  status: string,
-  price: number
-}
 
-const orderSchema = new Schema<IOrder>({
-  user: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
+const orderSchema = new Schema<IOrderSchema>({
+  name: {
+    type: String,
     required: true
+  },
+  phone: {
+    type: String,
+    required: true
+  },
+  services: {
+    type: [serviceSchema]
   },
   comment: String,
   barber: {
     type: Schema.Types.ObjectId,
-    ref: "Baber",
+    ref: "Staff",
     require: true,
   },
-  date: Date,
+  date: String,
   status: {
     type: String,
-    default: 'active'
+    default: 'active',
+    enum: ['active', 'resolved', 'rejected']
   },
   price: {
     type: Number,
@@ -34,4 +34,4 @@ const orderSchema = new Schema<IOrder>({
   }
 })
 
-export default model<IOrder>("Order", orderSchema)
+export default model<IOrderSchema>("Order", orderSchema)

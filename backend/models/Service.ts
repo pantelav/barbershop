@@ -3,7 +3,7 @@ import { IServiceSchema } from '../types/services'
 
 const { Schema, model } = mongoose
 
-const serviceSchema = new Schema<IServiceSchema>({
+export const serviceSchema = new Schema<IServiceSchema>({
   title: {
     type: String,
     required: true

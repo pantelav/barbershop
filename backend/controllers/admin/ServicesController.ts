@@ -29,7 +29,7 @@ export default class ServicesControler {
         categories.push(obj)
       })
 
-      return res.json({ ...categories })
+      return res.json(categories)
     } catch (error) {
       console.log(error);
       return res.status(500).json({ message: "Ошибка сервера" })

@@ -7,5 +7,6 @@ router.get(endpoint, StaffController.getStaff)
 router.post(endpoint, StaffController.createUser)
 router.put(endpoint, StaffController.editUser)
 router.delete(endpoint, StaffController.deleteUser)
+router.get('/barbers', StaffController.getBarbers)
 
 export default router
