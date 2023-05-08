@@ -6,6 +6,7 @@ export const endpoints = {
     staff: '/admin/staff',
     barbers: '/admin/barbers',
     orders: '/admin/orders',
+    times: '/admin/orders/times',
     login: '/admin/login',
     regBarber: '/admin/reg/barber',
     regModerator: '/admin/reg/moderator',

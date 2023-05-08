@@ -9,7 +9,7 @@ export default class StaffController {
       const staffDb = await Staff.find()
       if (!staffDb.length) return res.json({ message: 'Нет записей' })
       const staff = staffTransformer(staffDb)
-      return res.json({ ...staff })
+      return res.json(staff)
     } catch (error) {
       console.log(error);
       return res.status(500).json({ message: 'Ошибка сервера' })
@@ -55,7 +55,7 @@ export default class StaffController {
 
   static async getBarbers (req: Request, res: Response) {
     try {
-      const barbers = await Staff.find({role: 'barber', isActive: true})
+      const barbers = await Staff.find({ role: 'barber', isActive: true })
       return res.json(barbers)
     } catch (error) {
       console.log(error);

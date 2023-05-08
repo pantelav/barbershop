@@ -17,7 +17,8 @@ export const staffTransformer = (users: any[]): IStaff[] => {
       name: user.name,
       role: user.role,
       isActive: user.isActive,
-      gender: user.gender
+      gender: user.gender,
+      workdays: user.workdays
     }
     data.push(obj)
   })

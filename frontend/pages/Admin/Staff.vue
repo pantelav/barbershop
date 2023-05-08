@@ -39,7 +39,6 @@
     <Dialog v-model:visible="dialog" modal :header="dialogHeader" :draggable="false" @hide="selectedPerson = null">
       <AdminStaffDialog :user="selectedPerson" @close="fetchStaff" />
     </Dialog>
-    <Toast />
   </div>
 </template>
 

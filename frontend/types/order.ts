@@ -7,7 +7,7 @@ export interface IOrder {
   price: number,
   services: IService[],
   status: Status,
-  barber: string,
+  barber: string | null,
   comment: string,
   date: Date | string | null,
   time?: string,

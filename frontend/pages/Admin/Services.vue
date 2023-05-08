@@ -32,7 +32,6 @@
     <Dialog v-model:visible="dialogVisible" modal :draggable="false" :header="dialogHeader">
       <component :is="dialogComponent" :data="dialogData" @close="fetchCategories" />
     </Dialog>
-    <Toast />
   </section>
 </template>
 

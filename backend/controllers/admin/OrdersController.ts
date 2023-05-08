@@ -2,6 +2,10 @@ import { Request, Response } from 'express';
 import Order from '../../models/Order';
 import { checkOrderBody } from '../../utils/bodyChecker';
 
+interface ITime {
+  h: number | string,
+  m: number | string,
+}
 export default class OrdersController {
   static async getOrders (req: Request, res: Response) {
     try {
@@ -51,4 +55,28 @@ export default class OrdersController {
     }
   }
 
+  static async getTimes (req: Request, res: Response) {
+    try {
+      const { barberId, date } = req.query
+      if (!barberId || !date) return res.status(400).json({ message: 'Ошибка запроса' })
+      // @ts-ignore
+      const monthName = date.split(' ')[1]
+      const newDate = new Date(date as string)
+      let d: string | number = newDate.getDate()
+      if (d < 10) d = '0' + d.toString()
+      const y = newDate.getFullYear()
+      const query = `${monthName} ${d} ${y}`
+      const orders = await Order.find({ barber: barberId, date: { $regex: query } })
+      const busyTime: ITime[] = []
+      orders.forEach(order => {
+        const orderDate = new Date(order.date)
+        const h = orderDate.getHours()
+        const m = orderDate.getMinutes()
+        busyTime.push({h, m})
+      })
+      res.json(busyTime)
+    } catch (error) {
+      res.status(500).json({ message: 'Ошибка сервера' })
+    }
+  }
 }

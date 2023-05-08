@@ -28,6 +28,38 @@
     <Dropdown v-model="userData.role" :options="categories" option-label="name" option-value="value"
       placeholder="Выберите категорию" />
 
+    <span>Рабочие дни</span>
+    <div class="flex gap-3 flex-wrap">
+      <div class="flex items-center">
+        <Checkbox v-model="userData.workdays" input-id="mon" :value="1" />
+        <label for="mon" class="ml-2">Пн</label>
+      </div>
+      <div class="flex items-center">
+        <Checkbox v-model="userData.workdays" input-id="tue" :value="2" />
+        <label for="tue" class="ml-2">Вт</label>
+      </div>
+      <div class="flex items-center">
+        <Checkbox v-model="userData.workdays" input-id="wed" :value="3" />
+        <label for="wed" class="ml-2">Ср</label>
+      </div>
+      <div class="flex items-center">
+        <Checkbox v-model="userData.workdays" input-id="thu" :value="4" />
+        <label for="thu" class="ml-2">Чт</label>
+      </div>
+      <div class="flex items-center">
+        <Checkbox v-model="userData.workdays" input-id="fri" :value="5" />
+        <label for="fri" class="ml-2">Пт</label>
+      </div>
+      <div class="flex items-center">
+        <Checkbox v-model="userData.workdays" input-id="sat" :value="6" />
+        <label for="sat" class="ml-2">Сб</label>
+      </div>
+      <div class="flex items-center">
+        <Checkbox v-model="userData.workdays" input-id="sun" :value="0" />
+        <label for="sun" class="ml-2">Вс</label>
+      </div>
+    </div>
+
     <span>Фото</span>
     <FileUpload mode="basic" accept="image/*" :max-file-size="10000000" chooseLabel="Выбрать файл" />
 
@@ -55,7 +87,8 @@ const userData = reactive({
   gender: 'm',
   role: 'barber',
   isActive: true,
-  avatar: ''
+  avatar: '',
+  workdays: [1, 2, 3, 4, 5]
 })
 onMounted(() => {
   if (props.user) {

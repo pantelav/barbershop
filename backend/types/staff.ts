@@ -8,7 +8,8 @@ export interface IStaffSchema {
   isActive: boolean,
   gender: string,
   avatar?: string,
-  description?: string
+  description?: string,
+  workdays: number[]
 }
 
 export interface IStaffDb extends IStaffSchema {

@@ -24,6 +24,10 @@ const staffSchema = new Schema<IStaffSchema>({
     type: String,
     enum: ['m', 'f'],
     default: 'm',
+  },
+  workdays: {
+    type: [Number],
+    enum: [0, 1, 2, 3, 4, 5, 6]
   }
 })
 

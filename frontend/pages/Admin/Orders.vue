@@ -38,7 +38,6 @@
     <Dialog v-model:visible="dialog" modal :draggable="false" @hide="selectedOrder = null">
       <AdminOrdersDialog :order="selectedOrder" @close="fetchOrders" />
     </Dialog>
-    <Toast />
   </div>
 </template>
 
@@ -46,6 +45,7 @@
 import { FilterMatchMode } from 'primevue/api'
 import { endpoints } from '~/constants/endpoints';
 import { IOrder } from '~/types/order'
+import { IStaff } from '~/types/staff';
 definePageMeta({
   layout: 'admin'
 })

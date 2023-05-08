@@ -6,7 +6,7 @@
     <InputText :disabled="editMode" v-model="orderData.phone" />
     <p>Барбер</p>
     <Dropdown :options="barbers" option-label="name" option-value="_id" placeholder="Выбрать мастера"
-      v-model="orderData.barber" />
+      v-model="orderData.barber" @change="resetDate" />
     <p>Статус</p>
     <Dropdown :options="statuses" option-label="name" optionValue="code" placeholder="Изменить статус"
       v-model="orderData.status" />
@@ -15,7 +15,8 @@
       display="chip" placeholder="Выбрать услуги" v-model="orderData.services" />
 
     <p>Дата</p>
-    <Calendar v-model="orderData.date" showIcon :min-date="new Date()" date-format="dd.mm.yy" />
+    <Calendar v-model="orderData.date" showIcon :min-date="new Date()" date-format="dd.mm.yy" :disabled-days="getWeekdays"
+      :disabled="!orderData.barber" @date-select="getTimes" />
     <p>Время</p>
     <Dropdown v-model="orderData.time" :options="times" :disabled="!orderData.date" />
     <p class="text-lg">Цена: {{ getPrice }}</p>
@@ -32,12 +33,13 @@
 import { endpoints } from '~/constants/endpoints';
 import { IOrder } from '~/types/order';
 import { ICategoryWithServices, IService } from '~/types/service'
+import { IStaff } from '~/types/staff';
 
 const emit = defineEmits(['close'])
 const props = defineProps(['order'])
 const isLoading = ref(false)
 const editMode = ref(false)
-const barbers = ref()
+const barbers = ref<IStaff[]>([])
 const services = ref<ICategoryWithServices[]>()
 const enum Actions {
   Mount,
@@ -53,10 +55,10 @@ const times = ref(['10:00', '10:30', '11:00', '11:30', '12:00'])
 const orderData = reactive<IOrder>({
   name: '',
   phone: '',
-  barber: '',
+  barber: null,
   services: [],
   status: 'active',
-  date: new Date(),
+  date: null,
   time: '',
   price: 0,
   comment: '',
@@ -71,12 +73,22 @@ const getPrice = computed(() => {
   return price
 })
 
+const getWeekdays = computed(() => {
+  const days = [0, 1, 2, 3, 4, 5, 6]
+  if (!orderData.barber) return []
+  if (barbers.value) {
+    const barber = barbers.value.find(el => el._id === orderData.barber)
+    const weekdays = days.filter((day) => !barber?.workdays.includes(day))
+    return weekdays
+  }
+})
+
 onMounted(async () => {
   try {
     isLoading.value = true
     const { data: barbersData } = await useApiFetch(endpoints.admin.barbers)
     const { data: servicesData } = await useApiFetch(endpoints.admin.all)
-    barbers.value = toRaw(barbersData.value)
+    barbers.value = toRaw(barbersData.value) as IStaff[]
     services.value = toRaw(servicesData.value) as ICategoryWithServices[]
     if (props.order) {
       Object.assign(orderData, props.order)
@@ -202,6 +214,27 @@ function formatDate (action: Actions) {
   }
 }
 
+function resetDate () {
+  orderData.date = null,
+    orderData.time = ''
+}
+
+async function getTimes () {
+  if (!orderData.date || !orderData.barber) return
+  try {
+    const date = orderData.date.toString()
+    const { data } = await useApiFetch(endpoints.admin.times, {
+      params: {
+        barberId: orderData.barber,
+        date
+      }
+    })
+    console.log(data.value);
+
+  } catch (error) {
+    useNotify('error', 'Ошибка загрузки данных')
+  }
+}
 </script>
 
 <style scoped lang='scss'></style>
