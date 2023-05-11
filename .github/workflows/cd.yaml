@@ -19,7 +19,7 @@ jobs:
             cd ~/app
             git remote add origin git@github.com:pantelav/barbershop.git
             git branch -m master main
-            git stash drop
+            git reset --hard
             git pull origin main
             cd ./backend
             npm ci
