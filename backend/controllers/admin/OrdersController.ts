@@ -1,11 +1,9 @@
 import { Request, Response } from 'express';
 import Order from '../../models/Order';
 import { checkOrderBody } from '../../utils/bodyChecker';
+import { generateTimes } from '../../utils/generateTimes';
+import { ITime } from '../../types/order';
 
-interface ITime {
-  h: number | string,
-  m: number | string,
-}
 export default class OrdersController {
   static async getOrders (req: Request, res: Response) {
     try {
@@ -54,11 +52,18 @@ export default class OrdersController {
       res.status(500).json({ message: 'Ошибка сервера' })
     }
   }
-
   static async getTimes (req: Request, res: Response) {
     try {
-      const { barberId, date } = req.query
+      let { barberId, date } = req.query
       if (!barberId || !date) return res.status(400).json({ message: 'Ошибка запроса' })
+      // @ts-ignore
+      if (date.split('.').length === 3) {
+        // @ts-ignore
+        const dateArr = date.split('.')
+        // @ts-ignore
+        date = new Date(dateArr[2], +dateArr[1]-1, dateArr[0])
+        date = date?.toString()
+      }
       // @ts-ignore
       const monthName = date.split(' ')[1]
       const newDate = new Date(date as string)
@@ -72,9 +77,14 @@ export default class OrdersController {
         const orderDate = new Date(order.date)
         const h = orderDate.getHours()
         const m = orderDate.getMinutes()
-        busyTime.push({h, m})
+        let duration = 0
+        order.services.forEach(service => {
+          duration += service.duration
+        })
+        busyTime.push({h, m, duration})
       })
-      res.json(busyTime)
+      const times = generateTimes(busyTime)
+      res.json(times)
     } catch (error) {
       res.status(500).json({ message: 'Ошибка сервера' })
     }

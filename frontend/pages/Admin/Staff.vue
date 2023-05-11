@@ -18,10 +18,11 @@
       <Column v-for="col in columns" :key="col.field" :field="col.field" :header="col.header"
         :sortable="col.field !== 'avatar'">
         <template v-if="col.field === 'name'" #body="slotProps">
-          <span class="pl-3 md:pl-0">{{ `${slotProps.data?.name || ''}` }}</span>
+          <span class="pl-3 md:pl-0 font-bold">{{ `${slotProps.data?.name || ''}` }}</span>
         </template>
         <template v-if="col.field === 'avatar'" #body="slotProps">
-          <NuxtImg :src="getAvatarUrl(slotProps.data)" width="50" fit="cover" />
+          <NuxtImg :src="getAvatarUrl(slotProps.data)" width="70" height="70" fit="cover" />
+          <!-- <img :src="getAvatarUrl(slotProps.data)" alt="" srcset="" class="avatar"> -->
         </template>
         <template v-if="col.field === 'category'" #body="slotProps">
           <p>{{ slotProps.data?.role === 'barber' ? 'Барбер' : 'Модератор' }}</p>
@@ -109,5 +110,12 @@ function getAvatarUrl (data: any) {
   align-items: center;
   padding: 10px;
   border-radius: 100px;
+}
+
+.avatar {
+  height: 90px;
+  width: 90px;
+  border-radius: 100px;
+  object-fit: cover;
 }
 </style>

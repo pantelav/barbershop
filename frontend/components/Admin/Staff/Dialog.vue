@@ -1,5 +1,5 @@
 <template>
-  <div class="staff__dialog flex flex-col gap-4 xs:w-[300px] w-[80vw]">
+  <form @submit.prevent enctype="multipart/form-data" class="staff__dialog flex flex-col gap-4 xs:w-[300px] w-[80vw]">
     <InputText placeholder="Имя" v-model="userData.name" />
 
     <span>Пол</span>
@@ -61,7 +61,8 @@
     </div>
 
     <span>Фото</span>
-    <FileUpload mode="basic" accept="image/*" :max-file-size="10000000" chooseLabel="Выбрать файл" />
+    <FileUpload mode="basic" name="avatar" @select="fileChange($event)" accept="image/*" :max-file-size="10000000"
+      chooseLabel="Выбрать файл" />
 
     <AppSpinner v-if="isLoading" />
     <div class="dialog__actions flex justify-between items-center mt-6" v-else>
@@ -69,7 +70,7 @@
       <Button label="Сохранить" :class="{ 'w-full': !props.user }" :disabled="!userData.name"
         @click="props?.user ? editStaff() : createStaff()" />
     </div>
-  </div>
+  </form>
 </template>
 
 <script setup lang='ts'>
@@ -90,6 +91,7 @@ const userData = reactive({
   avatar: '',
   workdays: [1, 2, 3, 4, 5]
 })
+const file = ref()
 onMounted(() => {
   if (props.user) {
     Object.assign(userData, props.user)
@@ -99,9 +101,10 @@ onMounted(() => {
 async function createStaff () {
   try {
     isLoading.value = true
+    const formData = createForm()
     await useApiFetch(endpoints.admin.staff, {
       method: 'post',
-      body: { ...userData }
+      body: formData
     })
     emit('close')
     useNotify('success', 'Сотрудник добавлен')
@@ -115,9 +118,10 @@ async function createStaff () {
 async function editStaff () {
   try {
     isLoading.value = true
+    const formData = createForm()
     await useApiFetch(endpoints.admin.staff, {
       method: 'put',
-      body: { ...userData },
+      body: formData,
       params: {
         id: props.user.id
       },
@@ -147,6 +151,22 @@ async function deleteStaff () {
   } finally {
     isLoading.value = false
   }
+}
+
+// @ts-ignore
+function fileChange (event) {
+  const inputFile = event.files[0]
+  file.value = inputFile
+}
+
+function createForm () {
+  const formData = new FormData()
+  for (const key in userData) {
+    // @ts-ignore
+    formData.append(key, userData[key])
+  }
+  if (file.value) formData.append('image', file.value)
+  return formData
 }
 </script>
 

@@ -18,9 +18,21 @@ export const staffTransformer = (users: any[]): IStaff[] => {
       role: user.role,
       isActive: user.isActive,
       gender: user.gender,
-      workdays: user.workdays
+      workdays: user.workdays,
+      avatar: user.avatar
     }
     data.push(obj)
   })
   return data
+}
+
+export const staffBodyTransformer = (body: any) => {
+  if (body?.workdays && typeof body.workdays === 'string') {
+    const arr = body.workdays.split(',')
+    body.workdays = arr.map((value: string) => parseInt(value))
+  }
+  if (body?.isActive && typeof body.isActive === 'string') {
+    body.isActive = Boolean(body.isActive)
+  }
+  return body
 }

@@ -7,7 +7,8 @@ export interface IServiceSchema {
   description?: string,
   picture?: string,
   price: number,
-  category: dbId
+  category: dbId,
+  duration: number
 }
 
 export interface IServiceDb extends IServiceSchema {

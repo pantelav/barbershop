@@ -4,7 +4,6 @@ export const setSecurityHeaders = (req: Request, res: Response, next: NextFuncti
     'X-Content-Type-Options': 'nosniff',
     'X-Frame-Options': 'DENY',
     'X-XSS-Protection': '1; mode=block',
-    'Cross-Origin-Resource-Policy': 'same-site',
     'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
     'Cross-Origin-Embedder-Policy': 'require-corp',
     'Referrer-Policy': 'no-referrer',
@@ -13,5 +12,9 @@ export const setSecurityHeaders = (req: Request, res: Response, next: NextFuncti
     'Content-Security-Policy': `object-src 'none'; script-src 'self'; img-src 'self'; frame-ancestors 'self'; require-trusted-types-for 'script'; block-all-mixed-content; upgrade-insecure-requests`,
     'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), payment=()'
   })
+  res.setHeader('Access-Control-Allow-Origin', '*')
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE')
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
+  res.setHeader('Access-Control-Allow-Credentials', 'true')
   next()
 }

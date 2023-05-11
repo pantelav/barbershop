@@ -1,7 +1,17 @@
 <template>
   <div class="dialog__container">
-    <InputText v-model="service.title" class="mb-4" placeholder="Услгуа" />
-    <InputText v-model="service.price" type="number" class="mb-4" placeholder="Стоимость" />
+    <span class="p-float-label mt-4 w-full">
+        <InputText id="service" v-model="service.title" class="w-full" />
+        <label for="service">Услгуа</label>
+      </span>
+      <span class="p-float-label mt-4">
+        <InputText id="price" v-model="service.price" type="number" class="w-full" />
+        <label for="price">Стоимость</label>
+      </span>
+      <span class="p-float-label mt-4">
+        <InputText id="duration" v-model="service.duration" type="number" class="w-full" />
+        <label for="duration">Продолжительность <b>в минутах</b></label>
+      </span>
     <AppSpinner  v-if="isLoading"/>
     <div class="flex gap-6 justify-between" v-else>
       <Button label="Удалить" severity="danger" text @click="deleteService" />
@@ -17,19 +27,21 @@ const emit = defineEmits(['close'])
 const props = defineProps(['data'])
 const isLoading = ref(false)
 
-const service = ref({
+const service = reactive({
   id: '',
   category: '',
   title: '',
-  price: null
+  price: null,
+  duration: null
 })
 
 onMounted(() => {
   // @ts-ignore
-  service.value.price = props.data.price as number
-  service.value.title = props.data.title as string
-  service.value.id = props.data.id as string
-  service.value.category = props.data.category as string
+  // service.value.price = props.data.price as number
+  // service.value.title = props.data.title as string
+  // service.value.id = props.data.id as string
+  // service.value.category = props.data.category as string
+  Object.assign(service, props.data)
 })
 
 async function editService () {
@@ -38,12 +50,13 @@ async function editService () {
     await useApiFetch(endpoints.admin.service, {
       method: 'put',
       params: {
-        id: service.value.id
+        id: service.id
       },
       body: {
-        title: service.value.title,
-        price: service.value.price,
-        category: service.value.category,
+        title: service.title,
+        price: service.price,
+        category: service.category,
+        duration: service.duration
       }
     })
     emit('close')
@@ -61,7 +74,7 @@ async function deleteService () {
     await useApiFetch(endpoints.admin.service, {
       method: 'delete',
       params: {
-        id: service.value.id
+        id: service.id
       }
     })
     emit('close')

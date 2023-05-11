@@ -13,7 +13,8 @@ export default class ServicesControler {
           id: item._id.toString(),
           title: item.title,
           price: item.price,
-          category: item.category
+          category: item.category,
+          duration: item.duration
         }
         services.push(obj)
       })

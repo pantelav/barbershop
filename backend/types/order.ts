@@ -15,3 +15,9 @@ export interface IOrderSchema {
 export interface IOrderClient extends IOrderSchema {
   id: string
 }
+
+export interface ITime {
+  h: number,
+  m: number,
+  duration: number
+}

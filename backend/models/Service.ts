@@ -18,6 +18,10 @@ export const serviceSchema = new Schema<IServiceSchema>({
     type: Schema.Types.ObjectId,
     ref: 'Category',
     required: true
+  },
+  duration: {
+    type: Number,
+    default: 60
   }
 })
 

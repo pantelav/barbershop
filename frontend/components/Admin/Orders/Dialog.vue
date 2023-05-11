@@ -51,7 +51,7 @@ const statuses = ref([
   { name: 'Завершен', code: 'resolved' },
   { name: 'Отменен', code: 'rejected' },
 ])
-const times = ref(['10:00', '10:30', '11:00', '11:30', '12:00'])
+const times = ref<string[]>([])
 const orderData = reactive<IOrder>({
   name: '',
   phone: '',
@@ -95,6 +95,10 @@ onMounted(async () => {
       editMode.value = true
       orderData.services = matchServices(services.value)
       formatDate(Actions.Mount)
+      if (orderData.date) {
+        await getTimes()
+        if (orderData.time) times.value.unshift(orderData.time)
+      }
     }
   } catch (error) {
     useNotify('error', 'Ошибка загрузки данных')
@@ -229,8 +233,10 @@ async function getTimes () {
         date
       }
     })
-    console.log(data.value);
-
+    if (Array.isArray(data.value) && data.value.length > 0) {
+      // @ts-ignore
+      times.value = data.value
+    }
   } catch (error) {
     useNotify('error', 'Ошибка загрузки данных')
   }

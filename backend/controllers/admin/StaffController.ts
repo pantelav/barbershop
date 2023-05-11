@@ -1,7 +1,10 @@
+import fs from 'fs'
+import path from 'path';
+import Staff from '../../models/Staff';
 import { Request, Response, NextFunction } from 'express'
 import { staffTransformer } from '../../utils/transformers';
-import Staff from '../../models/Staff';
 import { checkStaffBody } from '../../utils/bodyChecker';
+import { staffBodyTransformer } from '../../utils/transformers';
 
 export default class StaffController {
   static async getStaff (req: Request, res: Response) {
@@ -18,9 +21,9 @@ export default class StaffController {
 
   static async createUser (req: Request, res: Response) {
     try {
-      const body = req.body
+      const body = staffBodyTransformer(req.body)
       if (!checkStaffBody(body)) return res.status(400).json({ message: 'Ошибка запроса' })
-      await Staff.create({ ...body })
+      await Staff.create(body)
       return res.status(201).json({ message: 'Сотрудник добавлен' })
     } catch (error) {
       console.log(error);
@@ -31,9 +34,9 @@ export default class StaffController {
   static async editUser (req: Request, res: Response) {
     try {
       const { id } = req.query
-      const body = req.body
+      const body = staffBodyTransformer(req.body)
       if (!checkStaffBody(body) || !id) return res.status(400).json({ message: 'Ошибка запроса' })
-      await Staff.findByIdAndUpdate(id, { ...body })
+      await Staff.findByIdAndUpdate(id, body)
       return res.status(201).json({ message: 'Сотрудник изменен' })
     } catch (error) {
       console.log(error);
@@ -45,7 +48,13 @@ export default class StaffController {
     try {
       const { id } = req.query
       if (!id) return res.status(400).json({ message: 'Ошибка запроса' })
-      await Staff.findByIdAndDelete(id)
+      const deleted = await Staff.findByIdAndDelete(id)
+      if (deleted?.avatar) {
+        const urlPath = deleted.avatar.substring(deleted.avatar.indexOf('/uploads'))
+        fs.unlink(path.join(__dirname, '../..', urlPath), err => {
+          if (err) console.log(err);
+        })
+      }
       return res.status(201).json({ message: 'Сотрудник удален' })
     } catch (error) {
       console.log(error);
