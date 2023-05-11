@@ -22,7 +22,6 @@
         </template>
         <template v-if="col.field === 'avatar'" #body="slotProps">
           <NuxtImg :src="getAvatarUrl(slotProps.data)" width="70" height="70" fit="cover" />
-          <!-- <img :src="getAvatarUrl(slotProps.data)" alt="" srcset="" class="avatar"> -->
         </template>
         <template v-if="col.field === 'category'" #body="slotProps">
           <p>{{ slotProps.data?.role === 'barber' ? 'Барбер' : 'Модератор' }}</p>
@@ -50,6 +49,7 @@ definePageMeta({
   layout: 'admin'
 })
 
+const url = useUploadsUrl()
 const isLoading = ref(true)
 const dialog = ref(false)
 const selectedPerson = ref()
@@ -92,7 +92,7 @@ function showDialog (edit = false) {
 }
 
 function getAvatarUrl (data: any) {
-  if (data?.avatar) return data.avatar
+  if (data?.avatar) return url + data.avatar
   if (data.gender === 'f') {
     return '/icons/woman-face.svg'
   } else {

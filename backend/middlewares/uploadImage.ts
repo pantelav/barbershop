@@ -3,7 +3,7 @@ import path from 'path';
 import sharp from 'sharp';
 import { Response, Request, NextFunction } from 'express';
 
-const uploadUrl = 'http://127.0.0.1:8000/uploads/'
+const uploadUrl = 'uploads/'
 export const uploadImage = (req: Request, res: Response, next: NextFunction) => {
   if (req.file) {
     const fileName = req.file.filename
