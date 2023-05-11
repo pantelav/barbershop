@@ -21,10 +21,10 @@ jobs:
             git branch -m master main
             git pull origin main
             cd ./backend
-            npm install
+            npm ci
             npm run build
             cd ../frontend
-            npm install
+            npm ci
             npm run build
             pm2 start backend
             pm2 start frontend
