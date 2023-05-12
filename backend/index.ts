@@ -29,13 +29,17 @@ const port = process.env.PORT || 8000;
 
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
+app.enable('trust proxy')
 app.use(cookieParser())
-app.use(cors())
+app.use(cors({
+  origin: ['http://127.0.0.1:3000', 'http://127.0.0.1:8000'],
+  credentials: true
+}))
 app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" },
   crossOriginEmbedderPolicy: false,
 }))
-app.use(setSecurityHeaders)
+// app.use(setSecurityHeaders)
 app.use('/api', rootRouter)
 app.use('/uploads', express.static(__dirname + '/uploads'))
 app.get('/', (req: Request, res: Response) => {

@@ -12,21 +12,21 @@ export default class AdminAuthController {
     if (!login || !password) return res.status(400).json({ message: "Все поля обязательные" })
     try {
       const admin = await Admin.findOne({ login })
+
       if (!admin) return res.status(400).json({ message: "Неправильный логин или пароль" })
       const checkPassword = await bcrypt.compare(password, admin?.hash)
-      if (!checkPassword) res.status(400).json({ message: "Неправильный логин или пароль" })
+      if (!checkPassword) return res.status(400).json({ message: "Неправильный логин или пароль" })
 
       const transformedUser = userTransformer(admin)
       const adminToken = generateAccessToken(transformedUser)
       const refreshToken = generateRefreshToken(transformedUser)
 
       await Admin.findByIdAndUpdate(admin._id, { refresh: refreshToken })
-      res.cookie('refreshAdmin', refreshToken, { maxAge: REFRESH_AGE, httpOnly: true })
+      res.cookie('refresh', refreshToken, { maxAge: REFRESH_AGE, httpOnly: true, domain: '127.0.0.1', secure: true, sameSite: 'none' })
       return res.json({ adminToken, username: admin.username })
     } catch (error) {
       console.log(error);
       return res.status(500).json({ message: "Ошибка сервера" })
-
     }
   }
 
