@@ -1,5 +1,4 @@
 <template>
-  <!-- TODO Логин -->
   <div class="page__login">
     <form @submit.prevent="login" class="login__card w-[300px] flex flex-col gap-5 px-4">
       <NuxtImg src="/img/logo-long.png" />
@@ -14,6 +13,9 @@
 
 <script setup lang='ts'>
 import { endpoints } from '~/constants/endpoints';
+definePageMeta({
+  name: 'login'
+})
 const isLoading = ref(false)
 const form = reactive({
   login: '',
@@ -31,10 +33,7 @@ async function login () {
       return
       // return useNotify('error', 'Неправильный логин или пароль')
     }
-    const cookie = document.cookie
-    console.log(cookie);
-    
-    localStorage.setItem('acess_token', data.value?.adminToken as string)
+    localStorage.setItem('access_token', data.value?.adminToken as string)
     navigateTo('/admin/orders')
   } catch (error) {
     // useNotify('error', 'Ошибка сервера')

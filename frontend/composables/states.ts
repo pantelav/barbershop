@@ -1,19 +1,47 @@
-export const useSteps = () => useState('steps', () => 1)
+import { IService } from '~/types/service'
+import { IBarber } from '~/types/staff'
+interface IOrder {
+  steps: number,
+  barber: IBarber | null,
+  services: IService[],
+  date: Date | string | null,
+  time: string | null,
+  contacts: IContacts,
+}
 
-export const useSelectBarber = () => useState('selected-barber', () => null)
+interface IContacts {
+  name: string,
+  phone: string,
+  email: string,
+  comment: string
+}
 
-export const useSelectService = () => useState('selected-service', () => [''])
-
-export const useSelectTime = () => useState('selected-time', () => null)
+export const useOrder = () => useState('order', () => {
+  const order: IOrder = {
+    steps: 1,
+    barber: null,
+    services: [],
+    date: null,
+    time: null,
+    contacts: {
+      name: '',
+      phone: '',
+      email: '',
+      comment: ''
+    },
+  }
+  return order
+})
 
 export const useClearState = () => {
-  const steps = useSteps()
-  const barber = useSelectBarber()
-  const service = useSelectService()
-  const time = useSelectTime()
-
-  steps.value = 1
-  barber.value = null
-  service.value = ['']
-  time.value = null
+  const order = useOrder()
+  order.value.steps = 1
+  order.value.barber = null
+  order.value.services = []
+  order.value.date = null
+  order.value.time = null
+  order.value.contacts.name = ''
+  order.value.contacts.phone = ''
+  order.value.contacts.email = ''
+  order.value.contacts.comment = ''
 }

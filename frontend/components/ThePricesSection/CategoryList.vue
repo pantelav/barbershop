@@ -11,17 +11,11 @@
 </template>
 
 <script setup lang='ts'>
-interface IService {
-  title: string,
-  price: number
-}
-interface ICategory {
-  category: {
-    title: string,
-    services: Array<IService>
-  },
-}
-const props = defineProps<ICategory>()
+import { ICategoryWithServices } from '~/types/service'
+
+const props = defineProps<{
+  category: ICategoryWithServices
+}>()
 </script>
 
 <style scoped lang='scss'>

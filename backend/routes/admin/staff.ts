@@ -3,10 +3,12 @@ import StaffController from '../../controllers/admin/StaffController'
 import multer from 'multer'
 import path from 'path'
 import { uploadImage } from '../../middlewares/uploadImage'
+import { verifyAccess } from '../../middlewares/checkAuth'
 const router: Router = express.Router()
 const endpoint = '/staff'
 const upload = multer({ dest: path.join(__dirname, '../../uploads') })
 
+router.use(verifyAccess)
 router.get(endpoint, StaffController.getStaff)
 router.post(endpoint, upload.single('image'), uploadImage, StaffController.createUser)
 router.put(endpoint, upload.single('image'), uploadImage, StaffController.editUser)

@@ -19,3 +19,11 @@ export interface IStaffDb extends IStaffSchema {
 export interface IStaff extends IStaffSchema {
   id: string
 }
+
+export interface IClientStaff {
+  id: string,
+  gender: string,
+  name: string,
+  avatar?: string,
+  workdays: number[]
+}

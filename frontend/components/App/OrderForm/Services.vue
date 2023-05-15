@@ -1,9 +1,9 @@
 <template>
   <div class="services__container">
-    <div class="category" v-for="item in services" :key="item.category">
-      <p class="category__title">{{ item.category }}</p>
-      <div class="category__service" :class="{ 'service-selected': selectedServices.includes(service.title) }"
-        v-for="service in item.services" :key="service.title" @click="selectService(service.title)">
+    <div class="category" v-for="category in categories" :key="category.id">
+      <p class="category__title">{{ category.title }}</p>
+      <div class="category__service" :class="{ 'service-selected': isServiceInState(service) }"
+        v-for="service in category.services" :key="service.id" @click="selectService(service)">
         <p class="service__title">{{ service.title }}</p>
         <p class="service__price">{{ service.price }} р</p>
       </div>
@@ -12,57 +12,33 @@
 </template>
 
 <script setup lang='ts'>
-const services = ref([
-  {
-    category: "Стрижка",
-    services: [
-      {
-        title: "Стрижка под ноль",
-        price: "500"
-      },
-      {
-        title: "Стрижка под горшок",
-        price: "1000"
-      },
-    ]
-  },
-  {
-    category: "Бритье",
-    services: [
-      {
-        title: "Бритье усов",
-        price: "500"
-      },
-      {
-        title: "Бритье бороды",
-        price: "1000"
-      },
-    ]
-  },
-  {
-    category: "Стайлинг",
-    services: [
-      {
-        title: "Укладка",
-        price: "500"
-      },
-      {
-        title: "Мытье головы",
-        price: "1000"
-      },
-    ]
-  },
-])
-const selectedServices = useSelectService()
+import { endpoints } from '~/constants/endpoints'
+import { ICategoryWithServices, IService } from '~/types/service'
 
-function selectService (data: string) {
-  if (selectedServices.value.includes(data)) {
-    const index = selectedServices.value.indexOf(data)
-    selectedServices.value.splice(index, 1)
-  } else {
-    selectedServices.value.push(data)
+const categories = ref<ICategoryWithServices[] | null>()
+const order = useOrder()
+onMounted(async () => {
+  try {
+    const { data } = await useApiFetch<ICategoryWithServices[] | null>(endpoints.client.services)
+    categories.value = data.value
+  } catch (error) {
+
   }
-} 
+})
+
+function selectService (service: IService) {
+  const idx = order.value.services.findIndex(item => item.id === service.id )
+  if (idx > -1) {
+    order.value.services.splice(idx, 1)
+  } else {
+    order.value.services.push(service)
+  }
+}
+
+function isServiceInState(service: IService) {
+  const idx = order.value.services.findIndex(item => item.id === service.id)
+  return idx > -1 ? true : false
+}
 </script>
 
 <style scoped lang="scss">

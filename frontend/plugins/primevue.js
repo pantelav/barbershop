@@ -12,6 +12,8 @@ import Dropdown from 'primevue/dropdown';
 import FileUpload from 'primevue/fileupload';
 import MultiSelect from 'primevue/multiselect';
 import Checkbox from 'primevue/checkbox';
+import Skeleton from 'primevue/skeleton';
+import InputMask from 'primevue/inputmask';
 
 export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.use(PrimeVue, {
@@ -37,4 +39,6 @@ export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.component("FileUpload", FileUpload);
   nuxtApp.vueApp.component("MultiSelect", MultiSelect);
   nuxtApp.vueApp.component("Checkbox", Checkbox);
+  nuxtApp.vueApp.component("Skeleton", Skeleton);
+  nuxtApp.vueApp.component("InputMask", InputMask);
 });

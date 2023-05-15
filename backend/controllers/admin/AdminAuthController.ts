@@ -72,13 +72,13 @@ export default class AdminAuthController {
   }
 
   static async logout (req: Request, res: Response) {
-    const refreshToken = req.cookies.refresh
-    if (!refreshToken) res.status(400).json({ message: "Вы не авторизованы" })
+    const refreshToken = req.cookies?.refresh || null
+    if (!refreshToken) return res.status(400).json({ message: "Вы не авторизованы" })
     try {
       const userData = decodeRefreshToken(refreshToken)
-      const user = await Admin.findByIdAndUpdate(userData.id, { refresh: '' })
+      const user = await Admin.findByIdAndUpdate(userData?.id, { refresh: '' })
       if (!user) return res.status(400).json({ message: "Вы не авторизованы" })
-      res.clearCookie('refreshAdmin')
+      res.clearCookie('refresh')
       return res.json({ message: "Logout" })
     } catch (error) {
       console.log(error);
@@ -87,16 +87,17 @@ export default class AdminAuthController {
   }
 
   static async generateTokens (req: Request, res: Response) {
-    const refreshToken = req.cookies?.refreshAdmin
-    if (!refreshToken) res.status(403).json({ message: "Вы не авторизованы" })
+    const refreshToken = req.cookies?.refresh
+    if (!refreshToken) return res.status(403).json({ message: "Вы не авторизованы" })
     try {
       const userData = userTransformer(decodeRefreshToken(refreshToken))
+      console.log('userData', userData);
       const newAccess = generateAccessToken(userData)
       const newRefresh = generateRefreshToken(userData)
       const user = await Admin.findByIdAndUpdate(userData.id, { refresh: refreshToken })
       if (!user) return res.status(400).json({ message: "Вы не авторизованы" })
-      res.cookie('refreshAdmin', newRefresh, { maxAge: REFRESH_AGE, httpOnly: true })
-      res.json({ adminToken: newAccess })
+      res.cookie('refresh', newRefresh, { maxAge: REFRESH_AGE, httpOnly: true })
+      return res.json({ adminToken: newAccess })
     } catch (error) {
       console.log(error)
       return res.status(500).json({ message: "Ошибка сервера" })

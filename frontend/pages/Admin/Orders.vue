@@ -47,7 +47,8 @@ import { endpoints } from '~/constants/endpoints';
 import { IOrder } from '~/types/order'
 import { IStaff } from '~/types/staff';
 definePageMeta({
-  layout: 'admin'
+  layout: 'admin',
+  middleware: ['auth']
 })
 
 const isLoading = ref(false)

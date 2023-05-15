@@ -12,7 +12,7 @@ export default class StaffController {
       const staffDb = await Staff.find()
       if (!staffDb.length) return res.json({ message: 'Нет записей' })
       const staff = staffTransformer(staffDb)
-      return res.json(staff)
+      return res.json({ data: staff, bearer: req.body?.bearer })
     } catch (error) {
       console.log(error);
       return res.status(500).json({ message: 'Ошибка сервера' })
@@ -24,7 +24,7 @@ export default class StaffController {
       const body = staffBodyTransformer(req.body)
       if (!checkStaffBody(body)) return res.status(400).json({ message: 'Ошибка запроса' })
       await Staff.create(body)
-      return res.status(201).json({ message: 'Сотрудник добавлен' })
+      return res.status(201).json({ message: 'Сотрудник добавлен', bearer: req.body?.bearer })
     } catch (error) {
       console.log(error);
       return res.status(500).json({ message: 'Ошибка сервера' })
@@ -37,7 +37,7 @@ export default class StaffController {
       const body = staffBodyTransformer(req.body)
       if (!checkStaffBody(body) || !id) return res.status(400).json({ message: 'Ошибка запроса' })
       await Staff.findByIdAndUpdate(id, body)
-      return res.status(201).json({ message: 'Сотрудник изменен' })
+      return res.status(201).json({ message: 'Сотрудник изменен', bearer: req.body?.bearer })
     } catch (error) {
       console.log(error);
       return res.status(500).json({ message: 'Ошибка сервера' })
@@ -55,7 +55,7 @@ export default class StaffController {
           if (err) console.log(err);
         })
       }
-      return res.status(201).json({ message: 'Сотрудник удален' })
+      return res.status(201).json({ message: 'Сотрудник удален', bearer: req.body?.bearer })
     } catch (error) {
       console.log(error);
       return res.status(500).json({ message: 'Ошибка сервера' })
@@ -65,7 +65,7 @@ export default class StaffController {
   static async getBarbers (req: Request, res: Response) {
     try {
       const barbers = await Staff.find({ role: 'barber', isActive: true })
-      return res.json(barbers)
+      return res.json({ data: barbers, bearer: req.body?.bearer })
     } catch (error) {
       console.log(error);
       return res.status(500).json({ message: 'Ошибка сервера' })

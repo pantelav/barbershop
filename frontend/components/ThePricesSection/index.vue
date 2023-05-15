@@ -3,8 +3,14 @@
     <div class="_container my-20">
       <h2 class="w-full text-center pb-10">Цены</h2>
       <div class="services__container">
-        <template v-for="category in data">
+        <template v-for="category in services" v-if="services && !isLoading">
           <ThePricesSectionCategoryList :category="category" />
+        </template>
+        <template v-else>
+          <AppSkeletonPrices/>
+          <AppSkeletonPrices/>
+          <AppSkeletonPrices/>
+          <AppSkeletonPrices/>
         </template>
       </div>
     </div>
@@ -12,76 +18,24 @@
 </template>
 
 <script setup lang='ts'>
-const data = ref([
-  {
-    title: "Стрижка",
-    services: [
-      {
-        title: "Под насадку",
-        price: 500
-      },
-      {
-        title: "С переходами",
-        price: 1000
-      },
-      {
-        title: "Стрижка всеми инструментами",
-        price: 1000
-      },
-    ]
-  },
-  {
-    title: "Стрижка",
-    services: [
-      {
-        title: "Под насадку",
-        price: 500
-      },
-      {
-        title: "С переходами",
-        price: 1000
-      },
-      {
-        title: "Стрижка всеми инструментами",
-        price: 1000
-      },
-    ]
-  },
-  {
-    title: "Стрижка",
-    services: [
-      {
-        title: "Под насадку",
-        price: 500
-      },
-      {
-        title: "С переходами",
-        price: 1000
-      },
-      {
-        title: "Стрижка всеми инструментами",
-        price: 1000
-      },
-    ]
-  },
-  {
-    title: "Стрижка",
-    services: [
-      {
-        title: "Под насадку",
-        price: 500
-      },
-      {
-        title: "С переходами",
-        price: 1000
-      },
-      {
-        title: "Стрижка всеми инструментами",
-        price: 1000
-      },
-    ]
-  },
-])
+import { endpoints } from '~/constants/endpoints'
+import { ICategoryWithServices } from '~/types/service'
+
+const services = ref<ICategoryWithServices[] | null>(null)
+const isLoading = ref(false)
+
+onMounted(async () => {
+  try {
+    isLoading.value = true
+    const { data, error } = await useApiFetch<ICategoryWithServices[]>(endpoints.client.services)
+    if (error.value) useNotify('error', 'Ошибка загрузки данных')
+    services.value = data.value
+  } catch (error) {
+
+  } finally {
+    isLoading.value = false
+  }
+})
 </script>
 
 <style scoped lang='scss'>

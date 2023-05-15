@@ -1,29 +1,29 @@
 <template>
   <div class="form" :class="{ 'form-shadow': !props.modal }">
-    <h3 class="form__title pb-4 text-center">{{ formTitle[steps - 1] }}</h3>
+    <h3 class="form__title pb-4 text-center">{{ formTitle[order.steps - 1] }}</h3>
     <div class="form__steps">
       <div class="step">1</div>
-      <div class="step" :class="{ 'step-orange': steps > 1 }">2</div>
-      <div class="step" :class="{ 'step-orange': steps > 2 }">3</div>
-      <div class="step" :class="{ 'step-orange': steps > 3 }">4</div>
+      <div class="step" :class="{ 'step-orange': order.steps > 1 }">2</div>
+      <div class="step" :class="{ 'step-orange': order.steps > 2 }">3</div>
+      <div class="step" :class="{ 'step-orange': order.steps > 3 }">4</div>
       <div class="line"></div>
     </div>
     <div class="form__data w-full">
       <Transition name="fade" mode="out-in">
-        <component :is="components[steps - 1]" />
+        <component :is="components[order.steps - 1]" />
       </Transition>
     </div>
     <div class="form__actions w-full flex xs:mt-0 mt-4"
-      :class="{ 'justify-between': steps > 1, 'justify-end': steps < 2 }">
-      <Button label="Назад" severity="info" text @click="prevStep" v-if="steps > 1" />
-      <!-- <button class="btn btn-next" @click="nextStep">{{ btnText[steps - 1] }}</button> -->
-      <Button :label="btnText[steps - 1]" @click="nextStep" />
+      :class="{ 'justify-between': order.steps > 1, 'justify-end': order.steps < 2 }">
+      <Button label="Назад" severity="info" text @click="prevStep" v-if="order.steps > 1" />
+      <Button :label="btnText[order.steps - 1]" @click="nextStep" :disabled="checkNext" />
     </div>
   </div>
 </template>
 
 <script setup lang='ts'>
 import { AppOrderFormBarberContainer, LazyAppOrderFormServices, LazyAppOrderFormDate, LazyAppOrderFormInfo } from '#components'
+import { endpoints } from '~/constants/endpoints'
 
 const props = defineProps({
   modal: {
@@ -32,17 +32,50 @@ const props = defineProps({
   }
 })
 const components = shallowRef([AppOrderFormBarberContainer, LazyAppOrderFormServices, LazyAppOrderFormDate, LazyAppOrderFormInfo])
-const steps = useSteps()
+const order = useOrder()
 const formTitle = ['Выберите барбера', 'Выберите услуги', 'Выберите время', 'Введите контактные данные']
 const btnText = ['Выбрать услуги', 'Выбрать время', 'Ввести данные', 'Записаться']
-function nextStep () {
-  if (steps.value >= 4) return
-  steps.value++
+
+async function nextStep () {
+  if (order.value.steps >= 4) {
+    if (!order.value.contacts.name || !order.value.contacts.phone || !order.value.date || !order.value.time) {
+      return useNotify('error', 'Все обязательные поля должны быть заполнены')
+    }
+    const date = order.value.date as Date
+    const [h, m] = order.value.time?.split(':')
+    date.setHours(parseInt(h))
+    date.setMinutes(parseInt(m))
+    const body = {
+      name: order.value.contacts.name,
+      phone: order.value.contacts.phone,
+      barber: order.value.barber?.id,
+      services: order.value.services,
+      date: date.toString(),
+      comment: order.value.contacts.comment,
+      email: order.value.contacts.email,
+    }
+    const { data, error } = await useApiFetch(endpoints.client.order, {
+      method: 'post',
+      body
+    })
+    if (error.value) return useNotify('error', 'Ошибка загрузки данных')
+    console.log(data.value);
+    return
+  }
+  order.value.steps++
 }
 function prevStep () {
-  if (steps.value <= 1) return
-  steps.value--
+  if (order.value.steps <= 1) return
+  order.value.steps--
 }
+
+const checkNext = computed(() => {
+  if (order.value.steps === 1 && !order.value.barber) return true
+  if (order.value.steps === 2 && !order.value.services.length) return true
+  if (order.value.steps === 3 && !order.value.time) return true
+  if (order.value.steps === 4 && (!order.value.contacts.name || order.value.contacts.phone.length !== 15)) return true
+  return false
+})
 </script>
 
 <style scoped lang="scss">
@@ -54,6 +87,7 @@ function prevStep () {
   justify-content: flex-start;
   align-items: center;
   background-color: $primary;
+  max-height: 600px;
 
   @media screen and (max-width: 520px) {
     box-shadow: none !important;

@@ -1,31 +1,34 @@
 <template>
-  <div class="card cursor-pointer xs:py-6" :class="{ 'card-active': selectedBarber == barber }" @click="select" ref="barber">
-    <nuxt-img :src="getAvatar()" fit="contain" class="avatar mb-2" />
-    <p class="name">{{ props.name }}</p>
+  <div class="card cursor-pointer xs:py-6" :class="{ 'card-active': order.barber?.id == props.barber.id }" @click="select"
+    ref="barber">
+    <nuxt-img :src="getAvatar()" class="avatar mb-2" :class="{ icon: !props.barber.avatar }" />
+    <p class="name">{{ props.barber.name }}</p>
   </div>
 </template>
 
 <script setup lang='ts'>
-const props = defineProps({
-  imgSrc: String,
-  name: String,
-  gender: {
-    type: String,
-    default: 'm'
-  }
-})
+import { IBarber } from '~/types/staff'
+interface IProps {
+  barber: IBarber
+}
+const props = defineProps<IProps>()
 
+const url = useUploadsUrl()
 const barber = ref(null)
-const selectedBarber = useSelectBarber()
+const order = useOrder()
+
 
 function getAvatar () {
-  if (props.imgSrc) return props.imgSrc
-  if (props.gender === 'm') return '/icons/man-face.svg'
-  if (props.gender === 'w') return '/icons/woman-face.svg'
+  if (props.barber.avatar) return url + props.barber.avatar
+  if (props.barber.gender === 'm') return '/icons/man-face.svg'
+  return '/icons/woman-face.svg'
 }
 
 function select () {
-  selectedBarber.value = barber.value
+  useClearState()
+  if (props.barber.id) {
+    order.value.barber = props.barber
+  }
 }
 
 </script>
@@ -59,10 +62,15 @@ function select () {
   border: 1px solid #636363;
   border-radius: 50%;
   overflow: hidden;
+  object-fit: cover;
 
   @media screen and (max-width: 520px) {
     width: 20vw;
     height: 20vw;
   }
+}
+
+.icon {
+  object-fit: contain !important;
 }
 </style>

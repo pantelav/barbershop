@@ -11,6 +11,12 @@ export interface IServiceSchema {
   duration: number
 }
 
+export interface ICategorySchema {
+  _id: dbId,
+  title: string,
+  picture?: string
+}
+
 export interface IServiceDb extends IServiceSchema {
   _id: dbId
 }

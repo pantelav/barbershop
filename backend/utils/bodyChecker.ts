@@ -8,5 +8,9 @@ export const checkStaffBody = (body: any): boolean => {
 
 export const checkOrderBody = (body: IOrderSchema): boolean => {
   if (!body.name || !body.phone || !body.date) return false
+  const phoneNumber = body.phone.replace(/\D/g, '')
+  const reg = /^(\+7|8)?(\d{10})$/
+  const isNumber = reg.test(phoneNumber)
+  if (!isNumber) return false
   return true
 }

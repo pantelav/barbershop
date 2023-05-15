@@ -1,8 +1,11 @@
 import express, { Router } from "express"
 import ServicesControler from '../../controllers/admin/ServicesController'
+import { verifyAccess } from '../../middlewares/checkAuth'
 const router: Router = express.Router()
 
-router.get('/cs', ServicesControler.getCategoriesAndServices)
+router.use(verifyAccess)
+
+router.get('/cs',  ServicesControler.getCategoriesAndServices)
 
 router.get('/category', ServicesControler.getCategories)
 router.post('/category', ServicesControler.createCategory)

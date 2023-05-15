@@ -1,31 +1,27 @@
 <template>
-  <div class="info__container">
+  <form class="info__container">
     <span class="p-float-label">
-      <InputText id="name" v-model="contactData.name" type="text" class="w-full p-inputtext-lg" />
-      <label for="name">Ваше имя*</label>
+      <InputText id="name" v-model="order.contacts.name" type="text" class="w-full p-inputtext-lg" />
+      <label for="name">Ваше имя *</label>
     </span>
     <span class="p-float-label">
-      <InputText id="phone" v-model="contactData.phone" type="phone" class="w-full p-inputtext-lg" />
-      <label for="phone">Номер телефона*</label>
+      <InputMask id="phone" name="phone" v-model="order.contacts.phone" type="phone" mask="(999) 999-99-99"
+        class="w-full p-inputtext-lg"/>
+      <label for="phone">Номер телефона *</label>
     </span>
     <span class="p-float-label">
-      <InputText id="email" v-model="contactData.email" type="email" class="w-full p-inputtext-lg" />
+      <InputText id="email" v-model="order.contacts.email" type="email" class="w-full p-inputtext-lg" />
       <label for="email">Email</label>
     </span>
     <span class="p-float-label">
-      <InputText id="comment" v-model="contactData.comment" type="text" class="w-full p-inputtext-lg" />
+      <InputText id="comment" v-model="order.contacts.comment" type="text" class="w-full p-inputtext-lg" />
       <label for="comment">Комментарий к заказу</label>
     </span>
-  </div>
+  </form>
 </template>
 
 <script setup lang='ts'>
-const contactData = reactive({
-  name: '',
-  phone: '',
-  email: '',
-  comment: ''
-})
+const order = useOrder()
 </script>
 
 <style scoped lang="scss">

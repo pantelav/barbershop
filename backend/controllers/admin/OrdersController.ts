@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import Order from '../../models/Order';
 import { checkOrderBody } from '../../utils/bodyChecker';
 import { generateTimes } from '../../utils/generateTimes';
-import { ITime } from '../../types/order';
 
 export default class OrdersController {
   static async getOrders (req: Request, res: Response) {
@@ -13,7 +12,8 @@ export default class OrdersController {
         // @ts-ignore
         order.date = date
       })
-      return res.json(orders)
+      
+      return res.json({data: orders, bearer: req.body?.bearer})
     } catch (error) {
       res.status(500).json({ message: 'Ошибка сервера' })
     }
@@ -24,7 +24,7 @@ export default class OrdersController {
       const body = req.body
       if (!checkOrderBody(body)) return res.status(400).json({ message: 'Ошибка запроса' })
       await Order.create(body)
-      return res.status(201).json({ message: "Заказ оформлен" })
+      return res.status(201).json({ message: "Заказ оформлен", bearer: req.body?.bearer })
     } catch (error) {
       res.status(500).json({ message: 'Ошибка сервера' })
     }
@@ -36,7 +36,7 @@ export default class OrdersController {
       const { id } = req.query
       if (!checkOrderBody(body) || !id) return res.status(400).json({ message: 'Ошибка запроса' })
       await Order.findByIdAndUpdate(id, body)
-      return res.json({ message: "Заказ изменен" })
+      return res.json({ message: "Заказ изменен", bearer: req.body?.bearer })
     } catch (error) {
       res.status(500).json({ message: 'Ошибка сервера' })
     }
@@ -47,7 +47,7 @@ export default class OrdersController {
       const { id } = req.query
       if (!id) return res.status(400).json({ message: 'Ошибка запроса' })
       await Order.findByIdAndDelete(id)
-      return res.json({ message: "Заказ удален" })
+      return res.json({ message: "Заказ удален", bearer: req.body?.bearer })
     } catch (error) {
       res.status(500).json({ message: 'Ошибка сервера' })
     }
@@ -55,36 +55,9 @@ export default class OrdersController {
   static async getTimes (req: Request, res: Response) {
     try {
       let { barberId, date } = req.query
-      if (!barberId || !date) return res.status(400).json({ message: 'Ошибка запроса' })
-      // @ts-ignore
-      if (date.split('.').length === 3) {
-        // @ts-ignore
-        const dateArr = date.split('.')
-        // @ts-ignore
-        date = new Date(dateArr[2], +dateArr[1]-1, dateArr[0])
-        date = date?.toString()
-      }
-      // @ts-ignore
-      const monthName = date.split(' ')[1]
-      const newDate = new Date(date as string)
-      let d: string | number = newDate.getDate()
-      if (d < 10) d = '0' + d.toString()
-      const y = newDate.getFullYear()
-      const query = `${monthName} ${d} ${y}`
-      const orders = await Order.find({ barber: barberId, date: { $regex: query } })
-      const busyTime: ITime[] = []
-      orders.forEach(order => {
-        const orderDate = new Date(order.date)
-        const h = orderDate.getHours()
-        const m = orderDate.getMinutes()
-        let duration = 0
-        order.services.forEach(service => {
-          duration += service.duration
-        })
-        busyTime.push({h, m, duration})
-      })
-      const times = generateTimes(busyTime)
-      res.json(times)
+      if (!barberId || !date || typeof barberId !== 'string' || typeof date !== 'string') return res.status(400).json({ message: 'Ошибка запроса' })
+      const times = await generateTimes(barberId, date)
+      res.json({ data: times, bearer: req.body?.bearer })
     } catch (error) {
       res.status(500).json({ message: 'Ошибка сервера' })
     }

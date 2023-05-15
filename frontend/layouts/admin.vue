@@ -19,11 +19,14 @@
 </template>
 
 <script setup lang='ts'>
+import { endpoints } from '~/constants/endpoints';
+
 const sidebar = ref(false)
 const router = useRouter()
 
-// TODO: Logout
-function logout () {
+async function logout () {
+  localStorage.removeItem('access_token')
+  await useApiFetch(endpoints.admin.logout)
   router.push('/admin/login')
 }
 </script>

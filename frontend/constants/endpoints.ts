@@ -11,9 +11,13 @@ export const endpoints = {
     regBarber: '/admin/reg/barber',
     regModerator: '/admin/reg/moderator',
     logout: '/admin/logout',
-    tokens: '/admin/refresh'
+    tokens: '/admin/refresh',
+    verify: '/admin/verify'
   },
-  user: {
-
+  client: {
+    barbers: '/barbers',
+    services: '/services',
+    times: '/times',
+    order: '/order'
   }
 }

@@ -1,21 +1,27 @@
 import { Request, Response, NextFunction } from 'express'
-import jwt from "jsonwebtoken"
-import { decodeAccessToken, parseToken } from "../utils/jwt"
+import { decodeAccessToken, generateTokens, parseToken } from "../utils/jwt"
+import { REFRESH_AGE } from '../constants'
 
-export const verifyAccess = (req: Request, res: Response, next: NextFunction) => {
+export const verifyAccess = async (req: Request, res: Response, next: NextFunction) => {
   const accessToken = parseToken(req)
-
-  if (!accessToken) return res.status(403).json({ message: "Ошибка авторизации" })
+  const cookieRefresh = req.cookies?.refresh
+  if (!accessToken || !cookieRefresh) return res.status(403).json({ message: "Ошибка авторизации" })
   try {
     const decoded = decodeAccessToken(accessToken)
     if (!decoded) return res.status(403).json({ message: "Неверный токен доступа" })
     req.body.user = decoded
     next()
   } catch (error: any) {
-    if (error?.name === "TokenExpiredError") {
-      return res.status(401).json({ message: "Срок давности токена доступа истек" })
+    if (error?.name.includes('Token')) {
+      const tokens = await generateTokens(cookieRefresh)
+      if (tokens.errorToken || !tokens.accessToken || !tokens.refreshToken) {
+        return res.status(403).json({ message: "Не авторизован" })
+      }
+      res.cookie('refresh', tokens.refreshToken, { maxAge: REFRESH_AGE, httpOnly: true })
+      req.body.bearer = tokens.accessToken
+      next()
     } else {
-      console.log(error);
+      console.log(error.name);
       return res.status(500).json({ message: "Ошибка сервера" })
     }
   }

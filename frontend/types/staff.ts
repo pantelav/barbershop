@@ -7,3 +7,11 @@ export interface IStaff {
   avatar: string,
   workdays: number[]
 }
+
+export interface IBarber {
+  id: string,
+  gender: 'm' | 'f',
+  name: string,
+  avatar?: string,
+  workdays: number[]
+}

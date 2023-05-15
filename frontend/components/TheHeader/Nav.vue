@@ -2,7 +2,7 @@
   <a href="#services" class="nav__link" @click="$emit('close')">Услуги</a>
   <a href="#prices" class="nav__link" @click="$emit('close')">Цены</a>
   <a href="#contacts" class="nav__link" @click="$emit('close')">Контакты</a>
-  <a href="#" class="nav__link" @click="$emit('close')">Вход</a>
+  <!-- <a href="#" class="nav__link" @click="$emit('close')">Вход</a> -->
   <AppEnrollBtn />
 </template>
 

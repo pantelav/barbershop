@@ -46,7 +46,8 @@
 import { FilterMatchMode } from 'primevue/api'
 import { endpoints } from '@/constants/endpoints'
 definePageMeta({
-  layout: 'admin'
+  layout: 'admin',
+  middleware: ['auth']
 })
 
 const url = useUploadsUrl()

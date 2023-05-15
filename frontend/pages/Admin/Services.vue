@@ -39,7 +39,8 @@
 import { LazyAdminServicesDialogCategory, LazyAdminServicesDialogNewCategory, LazyAdminServicesDialogNewService, LazyAdminServicesDialogService } from '#components'
 import { endpoints } from '~/constants/endpoints';
 definePageMeta({
-  layout: 'admin'
+  layout: 'admin',
+  middleware: ['auth']
 })
 
 const isLoading = ref(true)
