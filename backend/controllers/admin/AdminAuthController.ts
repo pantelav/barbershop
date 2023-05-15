@@ -22,7 +22,7 @@ export default class AdminAuthController {
       const refreshToken = generateRefreshToken(transformedUser)
 
       await Admin.findByIdAndUpdate(admin._id, { refresh: refreshToken })
-      res.cookie('refresh', refreshToken, { maxAge: REFRESH_AGE, httpOnly: true, domain: '127.0.0.1', secure: true, sameSite: 'none' })
+      res.cookie('refresh', refreshToken, { maxAge: REFRESH_AGE, httpOnly: true })
       return res.json({ adminToken, username: admin.username })
     } catch (error) {
       console.log(error);
