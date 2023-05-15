@@ -1,28 +1,37 @@
 <template>
   <div class="form" :class="{ 'form-shadow': !props.modal }">
     <h3 class="form__title pb-4 text-center">{{ formTitle[order.steps - 1] }}</h3>
-    <div class="form__steps">
-      <div class="step">1</div>
-      <div class="step" :class="{ 'step-orange': order.steps > 1 }">2</div>
-      <div class="step" :class="{ 'step-orange': order.steps > 2 }">3</div>
-      <div class="step" :class="{ 'step-orange': order.steps > 3 }">4</div>
-      <div class="line"></div>
-    </div>
-    <div class="form__data w-full">
-      <Transition name="fade" mode="out-in">
-        <component :is="components[order.steps - 1]" />
-      </Transition>
-    </div>
-    <div class="form__actions w-full flex xs:mt-0 mt-4"
-      :class="{ 'justify-between': order.steps > 1, 'justify-end': order.steps < 2 }">
-      <Button label="Назад" severity="info" text @click="prevStep" v-if="order.steps > 1" />
-      <Button :label="btnText[order.steps - 1]" @click="nextStep" :disabled="checkNext" />
-    </div>
+    <template v-if="order.steps <= 4">
+      <div class="form__steps">
+        <div class="step">1</div>
+        <div class="step" :class="{ 'step-orange': order.steps > 1 }">2</div>
+        <div class="step" :class="{ 'step-orange': order.steps > 2 }">3</div>
+        <div class="step" :class="{ 'step-orange': order.steps > 3 }">4</div>
+        <div class="line"></div>
+      </div>
+      <div class="form__data w-full">
+        <Transition name="fade" mode="out-in">
+          <component :is="components[order.steps - 1]" />
+        </Transition>
+      </div>
+      <div class="form__actions w-full flex xs:mt-0 mt-4"
+        :class="{ 'justify-between': order.steps > 1, 'justify-end': order.steps < 2 }">
+        <Button label="Назад" severity="info" text @click="prevStep" v-if="order.steps > 1" />
+        <Button :label="btnText[order.steps - 1]" @click="nextStep" :disabled="checkNext" :loading="sendingForm" />
+      </div>
+    </template>
+    <LazyAppOrderFormSucessOrder v-else />
   </div>
 </template>
 
 <script setup lang='ts'>
-import { AppOrderFormBarberContainer, LazyAppOrderFormServices, LazyAppOrderFormDate, LazyAppOrderFormInfo } from '#components'
+import {
+  AppOrderFormBarberContainer,
+  LazyAppOrderFormServices,
+  LazyAppOrderFormDate,
+  LazyAppOrderFormInfo,
+  LazyAppOrderFormSucessOrder
+} from '#components'
 import { endpoints } from '~/constants/endpoints'
 
 const props = defineProps({
@@ -31,16 +40,18 @@ const props = defineProps({
     default: false
   }
 })
-const components = shallowRef([AppOrderFormBarberContainer, LazyAppOrderFormServices, LazyAppOrderFormDate, LazyAppOrderFormInfo])
+const sendingForm = ref(false)
+const components = shallowRef([AppOrderFormBarberContainer, LazyAppOrderFormServices, LazyAppOrderFormDate, LazyAppOrderFormInfo, LazyAppOrderFormSucessOrder])
 const order = useOrder()
-const formTitle = ['Выберите барбера', 'Выберите услуги', 'Выберите время', 'Введите контактные данные']
+const formTitle = ['Выберите барбера', 'Выберите услуги', 'Выберите время', 'Введите контактные данные', 'Вы записаны 👍']
 const btnText = ['Выбрать услуги', 'Выбрать время', 'Ввести данные', 'Записаться']
 
 async function nextStep () {
-  if (order.value.steps >= 4) {
+  if (order.value.steps === 4) {
     if (!order.value.contacts.name || !order.value.contacts.phone || !order.value.date || !order.value.time) {
       return useNotify('error', 'Все обязательные поля должны быть заполнены')
     }
+    sendingForm.value = true
     const date = order.value.date as Date
     const [h, m] = order.value.time?.split(':')
     date.setHours(parseInt(h))
@@ -58,9 +69,14 @@ async function nextStep () {
       method: 'post',
       body
     })
-    if (error.value) return useNotify('error', 'Ошибка загрузки данных')
-    console.log(data.value);
-    return
+    sendingForm.value = false
+    if (error.value) {
+      if (error.value.message === 'Не корректный формат номера телефона') {
+        return useNotify('error', error.value.message)
+      }
+      return useNotify('error', 'Ошибка загрузки данных')
+    }
+    return order.value.steps++
   }
   order.value.steps++
 }
@@ -73,7 +89,7 @@ const checkNext = computed(() => {
   if (order.value.steps === 1 && !order.value.barber) return true
   if (order.value.steps === 2 && !order.value.services.length) return true
   if (order.value.steps === 3 && !order.value.time) return true
-  if (order.value.steps === 4 && (!order.value.contacts.name || order.value.contacts.phone.length !== 15)) return true
+  if (order.value.steps === 4 && (!order.value.contacts.name || order.value.contacts.phone.length < 10)) return true
   return false
 })
 </script>

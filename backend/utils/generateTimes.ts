@@ -9,30 +9,55 @@ function padZero (number: number) {
   return number.toString().padStart(2, '0')
 }
 
-function isTimeExcluded (time: string, excludeTimes: ITime[]) {
-  for (let i = 0; i < excludeTimes.length; i++) {
-    const excludedTime = excludeTimes[i]
-    const excludedHour = excludedTime.h
-    const excludedMinute = excludedTime.m
-    const excludedDuration = excludedTime.duration;
+export const generateTimes = async (barberId: string, date: string) => {
+  const exludedTimes = await getExcludedTimes(barberId, date)
+  const currentTime = new Date();
+  const startDate = new Date(date);
+  startDate.setHours(START, 0, 0, 0); // Устанавливаем начальное время - 10:00
+  const endDate = new Date(date);
+  endDate.setHours(END, INTERVAL, 0, 0); // Устанавливаем конечное время - 21:00
 
-    const startTime = excludedHour * 60 + excludedMinute;
-    const endTime = startTime + excludedDuration;
+  if (startDate.getTime() <= currentTime.getTime() && currentTime.getTime() < endDate.getTime()) {
+    startDate.setHours(currentTime.getHours(), currentTime.getMinutes(), 0, 0);
+  }
+  if (currentTime.getTime() >= endDate.getTime()) return []
 
-    const currentTime = time.split(':');
-    const currentHours = parseInt(currentTime[0], 10);
-    const currentMinutes = parseInt(currentTime[1], 10);
-    const currentTimeInMinutes = currentHours * 60 + currentMinutes;
-    if (currentTimeInMinutes >= startTime && currentTimeInMinutes < endTime) {
-      return true
+  const times = [];
+  const interval = 15; // Интервал в минутах
+
+  while (startDate.getTime() < endDate.getTime()) {
+    const formattedTime = `${padZero(startDate.getHours())}:${padZero(startDate.getMinutes())}`;
+    // Проверяем, исключено ли текущее время
+    if (!isTimeExcluded(startDate, exludedTimes)) {
+      times.push(formattedTime);
+    }
+    startDate.setMinutes(startDate.getMinutes() + interval);
+  }
+
+  return times;
+}
+
+function isTimeExcluded (date: Date, exclude: ITime[]) {
+  for (const item of exclude) {
+    const startHour = item.h;
+    const startMinute = item.m;
+    const duration = item.duration;
+
+    const startTime = new Date(date);
+    startTime.setHours(startHour, startMinute, 0, 0);
+
+    const endTime = new Date(startTime);
+    endTime.setMinutes(startTime.getMinutes() + duration);
+
+    if (date >= startTime && date < endTime) {
+      return true;
     }
   }
 
-  return false
+  return false;
 }
 
-export async function generateTimes (barberId: string, date: string) {
-  // @ts-ignore
+async function getExcludedTimes (barberId: string, date: string) {
   if (date.split('.').length === 3) {
     // @ts-ignore
     const dateArr = date.split('.')
@@ -59,17 +84,5 @@ export async function generateTimes (barberId: string, date: string) {
     })
     busyTime.push({ h, m, duration })
   })
-
-  const times = []
-  let currentTime = START
-  while (currentTime <= END) {
-    const h = Math.floor(currentTime)
-    const m = (currentTime % 1) * 60
-    const formattedTime = `${padZero(h)}:${padZero(m)}`
-    if (!isTimeExcluded(formattedTime, busyTime)) {
-      times.push(formattedTime)
-    }
-    currentTime += INTERVAL / 60
-  }
-  return times
+  return busyTime
 }

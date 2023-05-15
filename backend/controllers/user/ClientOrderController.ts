@@ -6,7 +6,7 @@ export default class ClientOrderController {
   static async createOrder(req: Request, res: Response) {
     try {
       const body = req.body
-      if (!checkOrderBody(body)) return res.status(400).json({ message: 'Ошибка запроса' })
+      if (!checkOrderBody(body)) return res.status(400).json({ message: 'Не корректный формат номера телефона' })
       await Order.create(body)
       return res.status(201).json({ message: "Заказ оформлен" })
     } catch (error) {

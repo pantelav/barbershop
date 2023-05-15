@@ -5,8 +5,7 @@
       <label for="name">Ваше имя *</label>
     </span>
     <span class="p-float-label">
-      <InputMask id="phone" name="phone" v-model="order.contacts.phone" type="phone" mask="(999) 999-99-99"
-        class="w-full p-inputtext-lg"/>
+       <InputText id="phone" v-model="order.contacts.phone" type="number" class="w-full p-inputtext-lg" :minlength="9"/>
       <label for="phone">Номер телефона *</label>
     </span>
     <span class="p-float-label">
