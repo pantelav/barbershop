@@ -1,13 +1,13 @@
 import defu from 'defu'
 import type { UseFetchOptions } from 'nuxt/app'
-import { endpoints } from '~/constants/endpoints'
 
 const dev = import.meta.env.DEV
 const ip = dev ? '127.0.0.1' : '80.78.245.244'
 const port = dev ? '8000' : '80'
 // @ts-ignore
 export async function useApiFetch<T> (path: string, options?: UseFetchOptions<T>) {
-  const url = `http://${ip}:${port}/api`
+  // const url = `http://${ip}:${port}/api`
+  const url = `/api`
   await nextTick()
   const defaults: UseFetchOptions<T> = {
     baseURL: url,
