@@ -1,7 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   routeRules: {
-    '/admin': { redirect: '/admin/orders' }
+    '/admin': { redirect: '/admin/orders' },
   },
   runtimeConfig: {
     public: {

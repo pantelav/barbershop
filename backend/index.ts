@@ -32,7 +32,7 @@ app.use(bodyParser.json())
 app.enable('trust proxy')
 app.use(cookieParser())
 app.use(cors({
-  origin: ['http://127.0.0.1:3000', 'http://127.0.0.1:8000'],
+  origin: ['http://127.0.0.1:3000', 'http://127.0.0.1:8000', 'http://127.0.0.1:80', 'http://127.0.0.1:443', 'http://80.78.245.244/3000', 'http://80.78.245.244/8000', 'http://80.78.245.244/80', 'http://80.78.245.244/443'],
   credentials: true
 }))
 app.use(helmet({
